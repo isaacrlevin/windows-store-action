@@ -52,10 +52,6 @@ This action allows you to publish your app on the Store by creating a submission
 
 * Delete pending submissions (*bool*) - If checked, will attempt to delete any in-progress submission before starting a new one. Note that only one submission at a time can be pending. Therefore, if this box is not checked and a submission is already pending, the task will fail. Furthermore, submissions created on the Dev Center UI cannot be deleted automatically by the task.
 
-* Metadata update method - How to update the app's metadata. Options are *No Update*, *Text Metadata* or *JSON-formatted Metadata*. In the first case, the app's metadata will not be changed from the previous submission. In the latter cases, the app's metadata will be updated according to the [expected format](#metadata-format).
-
-* Metadata path (*File path, required if visible*) - Path to a directory containing the metadata to update (appears when selecting another option than *No Update* for the metadata update method). The expected format is detailed [below](#metadata-format).
-
 * Package path (*string, optional*) - Path to your app's main package (usually a file in .appx, .xap or .appxbundle format). Minimatch pattern is supported.
 
 * Additional package(s) (*string, optional*) - A list of paths, one per line, of additional packages that your app needs, for example to support multiple platforms. Each individual path supports Minimatch pattern.
@@ -67,103 +63,6 @@ This action allows you to publish your app on the Store by creating a submission
 * Number of Packages to keep (*int, required*) - Specify number of latest packages (sorted by version) to be kept per unique target device family and target platform. For example, if you have a mix of 3 distinct packages each for Windows 10 desktop, mobile and Windows 8.1 X64 platform (so in total 9 packages), and you specify 2 in this box, then the oldest package in each group will be deleted (total packages after deletion will be 6).
 
 You only have to select the packages you want to update. If you have a package that will not be updated as part of your release, you do not have to specify it.
-
-#### Metadata format
-
-The metadata format for the Publish task is as follows:
-
-```
-$(Metadata path)
-└ $(language codes)    (e.g. en-us)
-  ├ baseListing
-  | ├ metadata.json  OR  $(attribute).txt
-  | └ images
-  |   └ $(image type)    (e.g. MobileScreenshot)
-  |     ├ $(image).png
-  |     └ $(image).json  OR  $(attribute).$(image).txt
-  └ platformOverrides  (optional)
-    └ $(platform)    (e.g. Windows81)
-      └ (Same structure as under 'baseListing')
-```
-
-[Examples](#metadata-structure-example) are available below.
-
-If the **Metadata update method** parameter is set to *Text Metadata*, text files are expected. If it is set to *JSON-formatted Metadata*, then JSON files are expected. All folder and file names are case-sensitive.
-
-If text files are expected, then there should be one text file per metadata attribute that you wish to update, and it should have the same name as the attribute in question. For string attributes, the entire file contents will be used as-is. For array attributes (e.g. keywords, hardware capabilities), each non-empty line will be considered as an element of the array.
-
-If JSON files are expected, then each JSON file must contain an object which has the attributes that you wish to update.
-
-Metadata from the previous submission is always preserved if it is not present in the provided folder. For example, if you do not provide a "description.txt" file in your listing, the description will remain the same as it was in the last submission.
-
-You can find the list of accepted attributes for the language code listings [here](https://msdn.microsoft.com/en-us/windows/uwp/monetize/manage-app-submissions#base-listing-object). Note that the task will automatically set the ```images``` attribute for you based on the file structure you provide, so you should not specify it as it will be overridden.
-
-You can find the list of accepted names for platform overrides [here](https://msdn.microsoft.com/en-us/windows/uwp/monetize/manage-app-submissions#listing-object).
-
-In the case of images, images from the previous submission are deleted, and must therefore be supplied again. Accepted attributes for the images can be found [here](https://msdn.microsoft.com/en-us/windows/uwp/monetize/manage-app-submissions#image-object). Note that the task will
-automatically set the ```fileName```, ```fileStatus```, ```id``` and ```imageType``` attributes for you, so you should not specify them as they will be overridden. The ```imageType``` attribute will correspond to the name of the folder in which your image is placed. The list of accepted image types can be found [here](https://msdn.microsoft.com/en-us/windows/uwp/monetize/manage-app-submissions#image-object). Json file (e.g. `mainScreenshot.json`) is neccessarry. Empty json (`{}`) is minimal requirement.
-
-The Store only supports images in png format. If you include images in any other format, they will be ignored.
-
-#### Metadata structure example
-
-Here are two examples of metadata structures, one for JSON attributes and one for text attributes.
-
-```
-appMetadata
-├ en-us
-| ├ baseListing
-| | ├ metadata.json
-| | └ images
-| |   └ Screenshot
-| |     ├ mainScreenshot.png
-| |     ├ mainScreenshot.json
-| |     ├ controls.png
-| |     └ controls.json
-| └ platformOverrides
-|   └ Windows80
-|     └ metadata.json
-├ cs-cz
-| └ platformOverrides
-|   └ WindowsPhone71
-|     └ images
-|       └ Icon
-|         ├ czIcon.png
-|         └ czIcon.json
-└ fr-ca
-  └ baseListing
-    └ metadata.json
-```
-
-```
-appMetadata
-├ en-us
-| ├ baseListing
-| | ├ description.txt
-| | ├ features.txt
-| | ├ keywords.txt
-| | └ images
-| |   └ Screenshot
-| |     ├ mainScreenshot.png
-| |     ├ description.mainScreenshot.txt
-| |     ├ controls.png
-| |     └ description.controls.txt
-| └ platformOverrides
-|   └ Windows80
-|     ├ description.txt
-|     └ releaseNotes.txt
-├ cs-cz
-| └ platformOverrides
-|   └ WindowsPhone71
-|     └ images
-|       └ Icon
-|         ├ czIcon.png
-|         └ description.czIcon.txt
-└ fr-ca
-  └ baseListing
-    └ features.txt
-```
-
 ## Sample
 
 ```yml
