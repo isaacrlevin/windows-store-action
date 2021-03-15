@@ -87,10 +87,10 @@ jobs:
       name: Publish to Store
       with:
         tenant-id: ${{ secrets.STORE_TENANT }}
-client-id: ${{ secrets.STORE_TENANT }}
-client-secret: ${{ secrets.STORE_TENANT }}
-app-id: ${{ secrets.STORE_TENANT }}
-package-path: "${{ github.workspace }}/ReleaseSigned/MyApp.appxupload"
+        client-id: ${{ secrets.STORE_TENANT }}
+        client-secret: ${{ secrets.STORE_TENANT }}
+        app-id: ${{ secrets.STORE_TENANT }}
+        package-path: "${{ github.workspace }}/ReleaseSigned/MyApp.appxupload"
 
 
 ```
