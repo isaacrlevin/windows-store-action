@@ -1,0 +1,49 @@
+name: 'Windows Store Publish'
+author: 'Isaac Levin'
+description: 'Greet someone and record the time'
+inputs:
+  tenant-id:
+    description: 'Id of Partner Tenant'
+    required: true
+  client-id:
+    description: 'Id of Partner App Registration'
+    required: true
+  client-secret:
+    description: 'Secret for Partner App Registration'
+    required: true
+  app-id:
+    description: 'Id for App in Partner Center'
+    required: true
+  delete-pending:
+    description: 'Delete any pending submissions in Partner Center'
+    required: false
+    default: 'true'
+  package-path:
+    description: 'Path to MISX Package'
+    required: false
+    default: ''
+  skip-polling:
+    description: 'Skip polling the submission after committing it to Dev Center'
+    required: false
+    default: 'true'
+  delete-packages:
+    description: 'Enable deletion of one or more old packages (sorted by version)'
+    required: false
+    default: 'true'
+  packages-keep:
+    description: 'Specify number of latest packages (sorted by version) to be kept'
+    required: false
+    default: '0'
+  update-images:
+    description: 'Update Package Images'
+    required: false
+    default: 'false'
+outputs:
+  url: # id of output
+    description: 'URl to Partner Dashboard'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
