@@ -96244,6 +96244,7 @@ const STRING_ARRAY_ATTRIBUTES = {
     features: true,
     recommendedhardware: true,
 };
+const packageExtensions = [".msix", ".msixbundle", ".msixupload", ".appx", ".appxbundle", ".appxupload", ".xap"];
 /**
  * The main task function.
  */
@@ -96259,10 +96260,19 @@ function publishTask() {
             clientId: core.getInput("client-id"),
             clientSecret: core.getInput("client-secret"),
         };
-        packages =
-            fs.readdirSync(core.getInput("package-path")).map(file => {
-                return path.resolve(core.getInput("package-path"), file);
-            });
+        var files = fs.readdirSync(core.getInput("package-path"));
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            for (var j = 0; j < packageExtensions.length; j++) {
+                var ext = packageExtensions[j];
+                if (path.extname(file) == ext) {
+                    packages.push(file);
+                }
+            }
+        }
+        packages.map((file) => {
+            return path.resolve(core.getInput("package-path"), file);
+        });
         console.log("Authenticating...");
         currentToken = yield request.authenticate("https://manage.devcenter.microsoft.com", credentials);
         appId = core.getInput("app-id"); // Globally set app ID for future steps.
