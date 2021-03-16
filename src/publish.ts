@@ -72,8 +72,8 @@ export async function publishTask() {
     }
   }
 
-  packages.map((file) => {
-    return path.resolve(core.getInput("package-path"), file);
+ packages = packages.map((file) => {
+    return path.join(core.getInput("package-path"), file);
   });
 
   console.log("Authenticating...");
