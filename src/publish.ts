@@ -13,6 +13,8 @@ var currentToken: request.AccessToken;
 /** The app ID we are publishing to */
 var appId: string;
 
+var packages: string[] = [];
+
 /** Expected imageType values */
 const imageType: string[] = [
   "Screenshot",
@@ -56,25 +58,17 @@ export async function publishTask() {
     clientSecret: core.getInput("client-secret"),
   };
 
+  packages =
+  fs.readdirSync( core.getInput("package-path") ).map( file => {
+     return path.resolve( core.getInput("package-path"), file );
+   });
+
   console.log("Authenticating...");
   currentToken = await request.authenticate(
     "https://manage.devcenter.microsoft.com",
     credentials
   );
   appId = core.getInput("app-id"); // Globally set app ID for future steps.
-
-  var appResource = await getAppResource();
-
-  // Delete pending submission if force is turned on (only one pending submission can exist)
-  if (
-    core.getInput("delete-pending") &&
-    appResource.pendingApplicationSubmission != undefined
-  ) {
-    console.log("Deleting existing submission...");
-    await deleteAppSubmission(
-      appResource.pendingApplicationSubmission.resourceLocation
-    );
-  }
 
   console.log("Creating submission...");
   var submissionResource = await createAppSubmission();
@@ -94,7 +88,7 @@ export async function publishTask() {
 
   console.log("Creating zip file...");
 
-  var zip = api.createZipFromPackages(core.getInput("package-path"));
+  var zip = api.createZipFromPackages(packages);
   addImagesToZip(submissionResource, zip);
 
   // There might be no files in the zip if the user didn't supply any packages or images.
@@ -222,7 +216,7 @@ function putMetadata(submissionResource: any): Q.Promise<void> {
 
   // Also at this point add the given packages to the list of packages to upload.
   api.includePackagesInSubmission(
-    core.getInput("package-path"),
+    packages,
     submissionResource.applicationPackages
   );
 

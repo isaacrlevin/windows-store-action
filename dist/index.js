@@ -96218,30 +96218,31 @@ const request = __nccwpck_require__(5483);
 var currentToken;
 /** The app ID we are publishing to */
 var appId;
+var packages = [];
 /** Expected imageType values */
 const imageType = (/* unused pure expression or super */ null && ([
-    'Screenshot',
-    'MobileScreenshot',
-    'XboxScreenshot',
-    'SurfaceHubScreenshot',
-    'HoloLensScreenshot',
-    'StoreLogo9x16',
-    'StoreLogoSquare',
-    'Icon',
-    'PromotionalArt16x9',
-    'PromotionalArtwork2400X1200',
-    'XboxBrandedKeyArt',
-    'XboxTitledHeroArt',
-    'XboxFeaturedPromotionalArt',
-    'SquareIcon358X358',
-    'BackgroundImage1000X800',
-    'PromotionalArtwork414X180'
+    "Screenshot",
+    "MobileScreenshot",
+    "XboxScreenshot",
+    "SurfaceHubScreenshot",
+    "HoloLensScreenshot",
+    "StoreLogo9x16",
+    "StoreLogoSquare",
+    "Icon",
+    "PromotionalArt16x9",
+    "PromotionalArtwork2400X1200",
+    "XboxBrandedKeyArt",
+    "XboxTitledHeroArt",
+    "XboxFeaturedPromotionalArt",
+    "SquareIcon358X358",
+    "BackgroundImage1000X800",
+    "PromotionalArtwork414X180",
 ]));
 /** The following attributes are considered as lists of strings and not just strings. */
 const STRING_ARRAY_ATTRIBUTES = {
     keywords: true,
     features: true,
-    recommendedhardware: true
+    recommendedhardware: true,
 };
 /**
  * The main task function.
@@ -96258,28 +96259,25 @@ function publishTask() {
             clientId: core.getInput("client-id"),
             clientSecret: core.getInput("client-secret"),
         };
+        packages =
+            fs.readdirSync(core.getInput("package-path")).map(file => {
+                return path.resolve(core.getInput("package-path"), file);
+            });
         console.log("Authenticating...");
         currentToken = yield request.authenticate("https://manage.devcenter.microsoft.com", credentials);
         appId = core.getInput("app-id"); // Globally set app ID for future steps.
-        var appResource = yield getAppResource();
-        // Delete pending submission if force is turned on (only one pending submission can exist)
-        if (core.getInput("delete-pending") &&
-            appResource.pendingApplicationSubmission != undefined) {
-            console.log("Deleting existing submission...");
-            yield deleteAppSubmission(appResource.pendingApplicationSubmission.resourceLocation);
-        }
         console.log("Creating submission...");
         var submissionResource = yield createAppSubmission();
         var submissionUrl = `https://developer.microsoft.com/en-us/dashboard/apps/${appId}/submissions/${submissionResource.id}`;
         console.log(`Submission ${submissionUrl} was created successfully`);
         if (core.getInput("delete-packages")) {
-            console.log('Deleting old packages...');
+            console.log("Deleting old packages...");
             api.deleteOldPackages(submissionResource.applicationPackages, core.getInput("packages-keep"));
         }
         console.log("Updating submission...");
         yield putMetadata(submissionResource);
         console.log("Creating zip file...");
-        var zip = api.createZipFromPackages(core.getInput("package-path"));
+        var zip = api.createZipFromPackages(packages);
         addImagesToZip(submissionResource, zip);
         // There might be no files in the zip if the user didn't supply any packages or images.
         // If there are files, persist the file.
@@ -96376,7 +96374,7 @@ function commitAppSubmission(submissionId) {
 function putMetadata(submissionResource) {
     console.log(`Adding metadata for new submission ${submissionResource.id}`);
     // Also at this point add the given packages to the list of packages to upload.
-    api.includePackagesInSubmission(core.getInput("package-path"), submissionResource.applicationPackages);
+    api.includePackagesInSubmission(packages, submissionResource.applicationPackages);
     var url = api.ROOT +
         "applications/" +
         appId +
@@ -96386,7 +96384,12 @@ function putMetadata(submissionResource) {
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield publishTask();
+        try {
+            yield publishTask();
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
     });
 }
 main();
