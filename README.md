@@ -1,5 +1,5 @@
 #
-This is a GitHub Action to deploy MSIX Packages to the Windows Store. Most of the code is "borrowed from the already existng [Azure DevOps extension](https://marketplace.visualstudio.com/items?itemName=MS-RDX-MRO.windows-store-publish) of a similar name.
+This is a GitHub Action to deploy MSIX Packages to the Windows Store. Most of the code is "borrowed from the already existing [Azure DevOps extension](https://marketplace.visualstudio.com/items?itemName=MS-RDX-MRO.windows-store-publish) of a similar name.
 
 **NOTE**: I am not a very experienced with MSIX and App Bundling in general and I may not be doing the right things here, but it works for [the app I wrote this for](https://github.com/isaacrlevin/PresenceLight).
 
