@@ -86,10 +86,10 @@ jobs:
     - uses: isaacrlevin/windows-store-action
       name: Publish to Store
       with:
-        tenant-id: ${{ secrets.STORE_TENANT }}
-        client-id: ${{ secrets.STORE_TENANT }}
-        client-secret: ${{ secrets.STORE_TENANT }}
-        app-id: ${{ secrets.STORE_TENANT }}
+        tenant-id: ${{ secrets.AZURE_AD_TENANT_ID }}
+        client-id: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+        client-secret: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+        app-id: ${{ secrets.STORE_APP_ID }}
         package-path: "${{ github.workspace }}/ReleaseSigned/MyApp.appxupload"
 
 
