@@ -3,8 +3,6 @@
  * This is mainly a wrapper for the 'request' npm module that uses promises instead of callbacks.
  */
 
-/// <reference path="../../typings/index.d.ts" />
-
 import http = require('http'); // Only used for types
 
 import { v4 as uuidv4 } from 'uuid'

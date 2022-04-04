@@ -1,6 +1,6 @@
 ﻿require("dotenv").config();
 const core = require("@actions/core");
-/// <reference path="../../typings/index.d.ts" />
+
 import fs = require("fs");
 import path = require("path");
 import api = require("./common/apiHelper");
