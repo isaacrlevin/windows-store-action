@@ -1,5 +1,5 @@
 ﻿require("dotenv").config();
-const core = require("@actions/core");
+import core from "@actions/core";
 
 import fs = require("fs");
 import path = require("path");
@@ -88,11 +88,11 @@ export async function publishTask() {
   var submissionUrl = `https://developer.microsoft.com/en-us/dashboard/apps/${appId}/submissions/${submissionResource.id}`;
   console.log(`Submission ${submissionUrl} was created successfully`);
 
-  if (core.getInput("delete-packages")) {
+  if (core.getInput("delete-packages") === "true") {
     console.log("Deleting old packages...");
     api.deleteOldPackages(
       submissionResource.applicationPackages,
-      core.getInput("packages-keep")
+      +core.getInput("packages-keep")
     );
   }
 
@@ -113,7 +113,7 @@ export async function publishTask() {
   console.log("Committing submission...");
   await commitAppSubmission(submissionResource.id);
 
-  if (core.getInput("skip-polling")) {
+  if (core.getInput("skip-polling") === "true") {
     console.log("Skip polling option is checked. Skipping polling...");
     console.log(
       `Click here ${submissionUrl} to check the status of the submission in Dev Center`
