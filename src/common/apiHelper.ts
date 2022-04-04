@@ -3,8 +3,6 @@
  * create files required by the API, etc.
  */
 
-/// <reference path="../../typings/index.d.ts" />
-
 import request = require("./requestHelper");
 import { Dictionary } from "lodash";
 import fs = require("fs");
