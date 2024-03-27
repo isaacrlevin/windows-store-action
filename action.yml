@@ -42,7 +42,7 @@ outputs:
   url: # id of output
     description: 'URl to Partner Dashboard'
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: 'upload-cloud'
