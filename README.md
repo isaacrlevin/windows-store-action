@@ -77,7 +77,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v4
       name: Download Release Signed
       with:
         name: ReleaseSigned
